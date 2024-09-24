@@ -659,8 +659,8 @@ jobs:
 
       - name: Commit dist
         if: >-
-          startsWith(github.repository, 'LizardByte/') &&
-          github.ref == 'refs/heads/master' &&
+          startsWith(github.repository, 'DistantThunder/') &&
+          (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/custom-build ) &&
           (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions-js/push@v1.5
         with:
