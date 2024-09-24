@@ -32,7 +32,19 @@ jobs:
             ffmpeg_extras: >-
               --enable-amf
               --enable-cuda
-              --enable-cuda_llvm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
+              --enable-cuda_llvm
+              --enable-encoder=h264_amf,hevc_amf,av1_amf
+              --enable-encoder=h264_nvenc,hevc_nvenc,av1_nvenc
+              --enable-encoder=h264_vaapi,hevc_vaapi,av1_vaapi
+              --enable-encoder=h264_v4l2m2m
+              --enable-ffnvcodec
+              --enable-nvenc
+              --enable-v4l2_m2m
+              --enable-vaapi
+          - name: Linux-aarch64
+            os_type: linux
+            os: ubuntu-22.04
+            arch: aarch64
             shell: bash
             cmake_generator: Unix Makefiles
             host: aarch64-linux-gnu
