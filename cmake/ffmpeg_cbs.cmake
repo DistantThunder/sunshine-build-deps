@@ -7,15 +7,15 @@ project(cbs
 set(CMAKE_GENERATED_SRC_PATH ${CMAKE_BINARY_DIR}/generated-src)
 
 # Apply patches
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/apply_git_patch.cmake)
-APPLY_GIT_PATCH(${CMAKE_SOURCE_DIR}/ffmpeg_sources/ffmpeg
-        ${CMAKE_SOURCE_DIR}/ffmpeg_patches/cbs/01-explicit-intmath.patch)
-APPLY_GIT_PATCH(${CMAKE_SOURCE_DIR}/ffmpeg_sources/ffmpeg
-        ${CMAKE_SOURCE_DIR}/ffmpeg_patches/cbs/02-include-cbs-config.patch)
-APPLY_GIT_PATCH(${CMAKE_SOURCE_DIR}/ffmpeg_sources/ffmpeg
-        ${CMAKE_SOURCE_DIR}/ffmpeg_patches/cbs/03-remove-register.patch)
-APPLY_GIT_PATCH(${CMAKE_SOURCE_DIR}/ffmpeg_sources/ffmpeg
-        ${CMAKE_SOURCE_DIR}/ffmpeg_patches/cbs/04-size-specifier.patch)
+# include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/apply_git_patch.cmake)
+# APPLY_GIT_PATCH(${CMAKE_SOURCE_DIR}/ffmpeg_sources/ffmpeg
+#         ${CMAKE_SOURCE_DIR}/ffmpeg_patches/cbs/01-explicit-intmath.patch)
+# APPLY_GIT_PATCH(${CMAKE_SOURCE_DIR}/ffmpeg_sources/ffmpeg
+#         ${CMAKE_SOURCE_DIR}/ffmpeg_patches/cbs/02-include-cbs-config.patch)
+# APPLY_GIT_PATCH(${CMAKE_SOURCE_DIR}/ffmpeg_sources/ffmpeg
+#         ${CMAKE_SOURCE_DIR}/ffmpeg_patches/cbs/03-remove-register.patch)
+# APPLY_GIT_PATCH(${CMAKE_SOURCE_DIR}/ffmpeg_sources/ffmpeg
+#         ${CMAKE_SOURCE_DIR}/ffmpeg_patches/cbs/04-size-specifier.patch)
 
 file(COPY ${CMAKE_SOURCE_DIR}/ffmpeg_sources/ffmpeg DESTINATION ${CMAKE_GENERATED_SRC_PATH})
 
