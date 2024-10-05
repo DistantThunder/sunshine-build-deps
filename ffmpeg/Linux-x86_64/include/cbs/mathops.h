@@ -26,7 +26,7 @@
 
 #include "libavutil/attributes_internal.h"
 #include "libavutil/common.h"
-#include "config.h"
+#include "cbs/config.h"
 
 #define MAX_NEG_CROP 1024
 
