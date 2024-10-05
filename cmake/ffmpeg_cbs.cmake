@@ -30,23 +30,30 @@ if (WIN32)
     set(LEADING_SH_COMMAND sh)
 endif ()
 
-if (CROSS_COMPILE_ARM)
-    set(FFMPEG_EXTRA_CONFIGURE
-            --arch=aarch64
-            --enable-cross-compile)
+string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} arch)
+
+if (${arch} STREQUAL "aarch64" OR ${arch} STREQUAL "arm64")
     set(CBS_ARCH_PATH arm)
-elseif (CROSS_COMPILE_PPC)
-    set(FFMPEG_EXTRA_CONFIGURE
-            --arch=powerpc64le
-            --enable-cross-compile)
+elseif (${arch} STREQUAL "ppc64le")
     set(CBS_ARCH_PATH ppc)
-else ()
+elseif (${arch} STREQUAL "amd64" OR ${arch} STREQUAL "x86_64")
     set(CBS_ARCH_PATH x86)
+else ()
+    message(FATAL_ERROR "Unsupported system processor:" ${CMAKE_SYSTEM_PROCESSOR})
+endif ()
+
+if (CMAKE_CROSSCOMPILING)
+    set(FFMPEG_EXTRA_CONFIGURE --arch=${arch} --enable-cross-compile)
 endif ()
 
 # The generated config.h needs to have `CONFIG_CBS_` flags enabled (from `--enable-bsfs`)
 execute_process(
         COMMAND ${LEADING_SH_COMMAND} ./configure
+            --cc=${CMAKE_C_COMPILER}
+            --cxx=${CMAKE_CXX_COMPILER}
+            --ar=${CMAKE_AR}
+            --ranlib=${CMAKE_RANLIB}
+            --optflags=${CMAKE_C_FLAGS}
             --disable-all
             --disable-autodetect
             --disable-iconv
@@ -71,6 +78,7 @@ configure_file(${AVCODEC_GENERATED_SRC_PATH}/cbs_h265.h ${CBS_INCLUDE_PATH}/cbs_
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/cbs_jpeg.h ${CBS_INCLUDE_PATH}/cbs_jpeg.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/cbs_mpeg2.h ${CBS_INCLUDE_PATH}/cbs_mpeg2.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/cbs_sei.h ${CBS_INCLUDE_PATH}/cbs_sei.h COPYONLY)
+configure_file(${AVCODEC_GENERATED_SRC_PATH}/cbs_vp8.h ${CBS_INCLUDE_PATH}/cbs_vp8.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/cbs_vp9.h ${CBS_INCLUDE_PATH}/cbs_vp9.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/codec_desc.h ${CBS_INCLUDE_PATH}/codec_desc.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/codec_id.h ${CBS_INCLUDE_PATH}/codec_id.h COPYONLY)
@@ -80,7 +88,7 @@ configure_file(${AVCODEC_GENERATED_SRC_PATH}/get_bits.h ${CBS_INCLUDE_PATH}/get_
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/h264_levels.h ${CBS_INCLUDE_PATH}/h264_levels.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/h2645_parse.h ${CBS_INCLUDE_PATH}/h2645_parse.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/h264.h ${CBS_INCLUDE_PATH}/h264.h COPYONLY)
-configure_file(${AVCODEC_GENERATED_SRC_PATH}/hevc.h ${CBS_INCLUDE_PATH}/hevc.h COPYONLY)
+configure_file(${AVCODEC_GENERATED_SRC_PATH}/hevc/hevc.h ${CBS_INCLUDE_PATH}/hevc/hevc.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/mathops.h ${CBS_INCLUDE_PATH}/mathops.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/packet.h ${CBS_INCLUDE_PATH}/packet.h COPYONLY)
 configure_file(${AVCODEC_GENERATED_SRC_PATH}/sei.h ${CBS_INCLUDE_PATH}/sei.h COPYONLY)
@@ -105,6 +113,7 @@ set(CBS_SOURCE_FILES
         ${CBS_INCLUDE_PATH}/cbs_jpeg.h
         ${CBS_INCLUDE_PATH}/cbs_mpeg2.h
         ${CBS_INCLUDE_PATH}/cbs_sei.h
+        ${CBS_INCLUDE_PATH}/cbs_vp8.h
         ${CBS_INCLUDE_PATH}/cbs_vp9.h
         ${CBS_INCLUDE_PATH}/codec_desc.h
         ${CBS_INCLUDE_PATH}/codec_id.h
@@ -114,7 +123,7 @@ set(CBS_SOURCE_FILES
         ${CBS_INCLUDE_PATH}/h264_levels.h
         ${CBS_INCLUDE_PATH}/h2645_parse.h
         ${CBS_INCLUDE_PATH}/h264.h
-        ${CBS_INCLUDE_PATH}/hevc.h
+        ${CBS_INCLUDE_PATH}/hevc/hevc.h
         ${CBS_INCLUDE_PATH}/mathops.h
         ${CBS_INCLUDE_PATH}/packet.h
         ${CBS_INCLUDE_PATH}/sei.h
@@ -126,12 +135,14 @@ set(CBS_SOURCE_FILES
         ${AVCODEC_GENERATED_SRC_PATH}/cbs.c
         ${AVCODEC_GENERATED_SRC_PATH}/cbs_h2645.c
         ${AVCODEC_GENERATED_SRC_PATH}/cbs_av1.c
+        ${AVCODEC_GENERATED_SRC_PATH}/cbs_vp8.c
         ${AVCODEC_GENERATED_SRC_PATH}/cbs_vp9.c
         ${AVCODEC_GENERATED_SRC_PATH}/cbs_mpeg2.c
         ${AVCODEC_GENERATED_SRC_PATH}/cbs_jpeg.c
         ${AVCODEC_GENERATED_SRC_PATH}/cbs_sei.c
         ${AVCODEC_GENERATED_SRC_PATH}/h264_levels.c
         ${AVCODEC_GENERATED_SRC_PATH}/h2645_parse.c
+        ${AVCODEC_GENERATED_SRC_PATH}/vp8data.c
         ${FFMPEG_GENERATED_SRC_PATH}/libavutil/intmath.c)
 
 # conditional headers based on architecture
